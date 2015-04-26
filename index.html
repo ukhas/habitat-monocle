@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<!-- habitat: view -->
+<!-- http://habitat.habhub.org -->
+
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+    <title>habitat | monocle</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="/homepage/t/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="/homepage/t/css/skeleton.css" />
+    <link rel="stylesheet" type="text/css" href="/homepage/t/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="idea.css" />
+    <style>
+    #grey-section { margin-bottom: 0; }
+    </style>
+
+
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="/homepage/t/images/favicon.ico" />
+</head>
+<body>
+
+    <div id="top">
+        <header>
+            <div class="container">
+                <div class="sixteen columns">
+                    <h1 class="no-margin">
+                        <a href="http://habitat.habhub.org/" alt="habitat">
+                            <img src="/homepage/t/images/header_logo.jpg" alt="habitat" title="habitat"/>
+                        </a>
+                    </h1>
+                    <span id="app_name"><b>monocle</b></span>
+                </div>
+            </div>
+        </header>
+
+        <div id="grey-section">
+            <div class="container">
+                <div class="two-thirds column">
+                    <h3 class="remove-bottom" id="page_title">JSON for gentlemen</h3>
+                    <p class="remove-bottom" id="page_subtitle"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="data-container">
+        <div class="container">
+            <div class="two-thirds column">
+                <pre id="data"><code class="json">Loading...<code></pre>
+            </div>
+        </div>
+    </div>
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="../highlight.pack.js"></script>
+<script>
+$(document).ready(function() {
+
+var host = window.location.protocol + "//" + window.location.host + "/";
+var base = window.location.href.split('?')[0] + "?uri=";
+
+var uri = decodeURIComponent(window.location.search.split('=')[1]);
+
+    if(!uri.startsWith("http")) {
+        var uri = host + uri;
+    }
+
+    $("#page_subtitle").text(uri);
+
+
+    $.get(uri, function(data) {
+        var elm = $("#data code");
+        var html = JSON.stringify(JSON.parse(data), null, 4);
+        html = html.replace(/"([a-f0-9]{32,})"/gi, function(a,x) {
+            return "\"<a href='"+base+encodeURIComponent(host+"habitat/"+x)+"'>"+x+"</a>\"";
+        });
+
+        elm.html(html);
+
+        hljs.highlightBlock(elm.get(0));
+    });
+
+});
+</script>
+
+</body>
+</html>
