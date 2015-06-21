@@ -70,6 +70,8 @@ $(document).ready(function() {
 var host = window.location.protocol + "//" + window.location.host + "/";
 var base = window.location.href.split('?')[0] + "?uri=";
 
+var status_base = "http://habitat.habhub.org/habitat/_design/payload_telemetry/_view/payload_time?limit=1&descending=true&include_docs=true&startkey=";
+
 var uri = decodeURIComponent(window.location.search.split('=')[1]);
 
     if(!uri.startsWith("http")) {
@@ -79,9 +81,19 @@ var uri = decodeURIComponent(window.location.search.split('=')[1]);
     $("#page_subtitle").text(uri);
 
 
-    $.get(uri, function(data) {
+    $.getJSON(uri, function(data) {
         var elm = $("#data code");
-        var html = JSON.stringify(JSON.parse(data), null, 4);
+
+		if(data.type === "payload_configuration") {
+			var html = $("#page_subtitle").html();
+
+			var status_url = base + encodeURIComponent(status_base + "[%22"+data._id+"%22,{}]");
+			html += '<br><a href="' + status_url + '">Latest parse status</a>';
+
+			$("#page_subtitle").html(html);
+		}
+
+        var html = JSON.stringify(data, null, 4);
         html = html.replace(/"([a-f0-9]{32,})"/gi, function(a,x) {
             return "\"<a href='"+base+encodeURIComponent(host+"habitat/"+x)+"'>"+x+"</a>\"";
         });
